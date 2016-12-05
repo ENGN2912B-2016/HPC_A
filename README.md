@@ -5,6 +5,7 @@ Sayan Samanta, Arjun Sharma, Aravind A.V.P.S
 Course Project: A Study of Phase Separation in Ternary Alloys
 
 Summary
+
 In the paper, the authors have simulated a ternary compound (having 3 components namely A,B and C) which undergoes 'Spinodal Decomposition'. Spinodal Decomposition is a type of phase evolution where a thermodynamically unstable mixed system changes over time as the temperature is dropped. 
 
 In such a case, typically the rich become richer and the poor becomes poorer in a sense that from the mixed alloy if there is a slight perturbation in composition, the elements of same type cluster together (note that such a behavior is not a very commonplace, where in general systems tend to get more random in stead of clustering among like atoms). The authors have modeled the free energy based on the Cahn- Hilliard equation and then have minimized it which resulted into the evolution equations. These time dependent evolution equations are then solved at each time to see how the 'phase separation/phase evolution' occurs.
