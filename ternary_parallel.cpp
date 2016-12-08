@@ -11,7 +11,7 @@
  *
  *Please note that the dafault value would be assigned only if the value is 0 or garbage (with an warning ofcourse), the input files always has to be a 5 lines file. If that is not followed, then the program throws and error and exits.
  *
- *To compile type $mpic++ ternary.cpp -lfftw3_mpi -lfftw3 -lm -std=c++11 -g
+ *To compile type $g++ ternary.cpp -lfftw3 -lm -std=c++11 -g
  */ 
 
 
@@ -43,9 +43,33 @@ public:
   ternary(int argc, char **argv, double X1, double kA, double kB, double kC1, double icA, double icB, double icC, double mAA, double mBB, double mAB, double dx, double dy, double dt);//parameterized constructor
 
   //eint writeData(fstream *f); //method to write to file
-
+  //~ternary();
   void simulate(); //method which runs the simulation
 };
+
+/*ternary::~ternary()
+{
+       
+  //release the variables
+  fftw_free(cA);
+  fftw_free(cB);
+  fftw_free(cC);
+  fftw_free(gA);
+  fftw_free(gB);
+  fftw_free(cAtemp);
+  fftw_free(cBtemp);
+
+       //destroy the plans
+  fftw_destroy_plan(planFcA);
+  fftw_destroy_plan(planFcB);
+  fftw_destroy_plan(planFgA);
+  fftw_destroy_plan(planFgB);
+  fftw_destroy_plan(planBcA);
+  fftw_destroy_plan(planBcB);
+  fftw_destroy_plan(planBgA);
+  fftw_destroy_plan(planBgB);
+  }*/
+
 
 ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double kC1, double icA, double icB, double icC, double moAA, double moBB, double moAB, double dx, double dy, double dt)
   {
@@ -85,6 +109,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
     cAtemp = fftw_alloc_complex(alloc_local);
     cBtemp = fftw_alloc_complex(alloc_local);
 
+    
     //setting up the forward plans
     planFcA = fftw_mpi_plan_dft_2d(n_x,n_y,cA,cA,MPI_COMM_WORLD,FFTW_FORWARD,FFTW_ESTIMATE);
     planFcB = fftw_mpi_plan_dft_2d(n_x,n_y,cB,cB,MPI_COMM_WORLD,FFTW_FORWARD,FFTW_ESTIMATE);
@@ -93,6 +118,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
     planFcAtemp = fftw_mpi_plan_dft_2d(n_x,n_y,cAtemp,cAtemp,MPI_COMM_WORLD,FFTW_FORWARD,FFTW_ESTIMATE);
     planFcBtemp = fftw_mpi_plan_dft_2d(n_x,n_y,cBtemp,cBtemp,MPI_COMM_WORLD,FFTW_FORWARD,FFTW_ESTIMATE);
 
+    
     //setting up the inverse fourier transform plans
     planBcA = fftw_mpi_plan_dft_2d(n_x,n_y,cA,cA,MPI_COMM_WORLD,FFTW_BACKWARD,FFTW_ESTIMATE);
     planBcB = fftw_mpi_plan_dft_2d(n_x,n_y,cB,cB,MPI_COMM_WORLD,FFTW_BACKWARD,FFTW_ESTIMATE);
@@ -101,25 +127,25 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
     planBcAtemp = fftw_mpi_plan_dft_2d(n_x,n_y,cAtemp,cAtemp,MPI_COMM_WORLD,FFTW_FORWARD,FFTW_ESTIMATE);
     planBcBtemp = fftw_mpi_plan_dft_2d(n_x,n_y,cBtemp,cBtemp,MPI_COMM_WORLD,FFTW_FORWARD,FFTW_ESTIMATE);
 
-    for(int i1 = 0; i1 < local_nx - 1; ++i1)
+    for(int i1 = 0; i1 < local_nx; ++i1)
       {
 	for(int i2 = 0; i2 < n_y; ++i2)
 	  {
 	    //genrating the first disturbed microstructure around the initial composition
 	    double u = distribution(generator);
-	    cA[i2+n_y*i1][0] = icA + (icA - u)*5e-3;
-	    cA[i2+n_y*(i1)][1] = 0.0;
+	    cA[i2+n_y*(local_nx_start+i1)][0] = icA + (icA - u)*5e-3;
+	    cA[i2+n_y*(local_nx_start+i1)][1] = 0.0;
 	    u = distribution(generator);
-	    cB[i2+n_y*(i1)][0] = icB + (icB - u)*5e-3;
-	    cB[i2+n_y*(i1)][1] = 0.0;
+	    cB[i2+n_y*(local_nx_start+i1)][0] = icB + (icB - u)*5e-3;
+	    cB[i2+n_y*(local_nx_start+i1)][1] = 0.0;
 	    u = distribution(generator);
-	    cC[i2+n_y*(i1)][0] = icC + (icC - u)*5e-3;
-	    cC[i2+n_y*(i1)][1] = 0.0;
+	    cC[i2+n_y*(local_nx_start+i1)][0] = icC + (icC - u)*5e-3;
+	    cC[i2+n_y*(local_nx_start+i1)][1] = 0.0;
 
-	    cAtemp[i2+n_y*(i1)][0] = 0.0;
-	    cBtemp[i2+n_y*(i1)][0] = 0.0;
-	    cAtemp[i2+n_y*(i1)][1] = 0.0;
-	    cBtemp[i2+n_y*(i1)][1] = 0.0;
+	    cAtemp[i2+n_y*(local_nx_start+i1)][0] = 0.0;
+	    cBtemp[i2+n_y*(local_nx_start+i1)][0] = 0.0;
+	    cAtemp[i2+n_y*(local_nx_start+i1)][1] = 0.0;
+	    cBtemp[i2+n_y*(local_nx_start+i1)][1] = 0.0;
 	  }
       }
 
@@ -141,7 +167,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
    //running for all time steps
    for(int INDEX = 0; INDEX <= 1000; ++INDEX)
      {
-       for(i1 = 0; i1 < local_nx - 1; ++i1)
+       for(i1 = 0; i1 < local_nx; ++i1)
 	 {
 	   for(i2 = 0; i2 < n_y; ++i2)
 	     {
@@ -154,6 +180,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
 	     }
 	 }
 
+       
        //execute forward fourier transform
        fftw_execute(planFcA);
        fftw_execute(planFgA);
@@ -162,7 +189,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
        fftw_execute(planFcAtemp);
        fftw_execute(planFcBtemp);
 
-       for(i1 = 0; i1 < local_nx - 1; i1++)
+       for(i1 = 0; i1 < local_nx; i1++)
 	 {
 	   //incorporate periodic boundary condition along xe
 	   if(i1 < half_nx)
@@ -201,7 +228,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
 	 }
 
        //convert back from reciprocal space -> real space by inverse fourier transform
-
+       
        fftw_execute(planBcA);
        fftw_execute(planBcB);
        fftw_execute(planBgA);
@@ -209,7 +236,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
        fftw_execute(planBcAtemp);
        fftw_execute(planBcBtemp);
 
-       for(i1 = 0; i1 < local_nx - 1; i1++)
+       for(i1 = 0; i1 < local_nx; i1++)
 	 {
 	   for(i2 = 0; i2 < n_y; i2++)
 	     {
@@ -228,6 +255,7 @@ ternary::ternary(int argc, char **argv,double X1, double kA, double kB, double k
 	     }
 	 }
 
+       
        int rank;
        MPI_Comm_rank(MPI_COMM_WORLD,&rank);
        //prints data to fiile for every 1000 timestep
@@ -256,25 +284,7 @@ int main(int argc, char **argv)
   ternary *t = new ternary(argc,argv,3.5, 4.0, 4.0, 4.0, 0.25, 0.25, 0.5, 1.0, 1.0,-0.5, 1.0, 1.0, 0.05);
 
   t->simulate();
-       //release the variables
-       fftw_free(cA);
-       fftw_free(cB);
-       fftw_free(cC);
-       fftw_free(gA);
-       fftw_free(gB);
-       fftw_free(cAtemp);
-       fftw_free(cBtemp);
-
-       //destroy the plans
-       fftw_destroy_plan(planFcA);
-       fftw_destroy_plan(planFcB);
-       fftw_destroy_plan(planFgA);
-       fftw_destroy_plan(planFgB);
-       fftw_destroy_plan(planBcA);
-       fftw_destroy_plan(planBcB);
-       fftw_destroy_plan(planBgA);
-       fftw_destroy_plan(planBgB);
-
+  
   MPI_Finalize();
   return 0;
 }
