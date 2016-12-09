@@ -52,7 +52,7 @@ ternary::ternary(double X1, double kA, double kB, double kC1, double icA, double
     kAA = kA + kC1;
     kBB = kB + kC1;
     kC = kC1;
-    n_x = n_y = n_z = 64;
+    n_x = n_y = n_z = 128;
     delta_x = dx;
     delta_y = dy;
     delta_z = dz;
