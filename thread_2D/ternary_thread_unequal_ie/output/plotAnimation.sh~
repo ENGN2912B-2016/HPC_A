@@ -1,0 +1,8 @@
+#!/bin/bash
+
+k=0;
+while [ $k -lt 100000 ]; do
+echo "plot \"timestep$k.dat\" matrix with image" >> plotAnimation.gp
+echo "pause 0.05" >> plotAnimation.gp
+let k=$k+1000;
+done
