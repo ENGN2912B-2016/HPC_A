@@ -31,7 +31,7 @@ class ternary
   fftw_plan planFcA, planBcA, planFcB, planBcB, planFgA, planFgB, planBgA, planBgB, planFcAtemp, planFcBtemp, planBcAtemp, planBcBtemp; //fourier transform plans
 
   int n_x, n_y, n_z; //grid size
-  double kx, ky, kx2, ky2, kz2, k2, k4; //reciprocal space vectors
+  double kx, ky, kz, kx2, ky2, kz2, k2, k4; //reciprocal space vectors
   double X, kC, kAA, kBB, mAA, mBB, mAB; //physical constants
   double delta_x, delta_y, delta_z, delta_kx, delta_ky, delta_kz; //spatial step
   double delta_t; //time step
@@ -186,7 +186,8 @@ ternary::ternary(double X1, double kA, double kB, double kC1, double icA, double
 		 ky = i2*delta_ky;
 	       else
 		 ky = (i2 - n_y)*delta_ky;
-	      
+	       
+	       ky2 = ky*ky;	    
 	       for(i3 = 0; i3 < n_z; i3++)
 		 {
 		   if(i3 < half_nz)
@@ -194,7 +195,7 @@ ternary::ternary(double X1, double kA, double kB, double kC1, double icA, double
 		   else
 		     kz = (i3 - n_z)*delta_kz;
 
-		   ky2 = ky*ky;
+		   kz2 = kz*kz;
 		   k2 = kx2 + ky2 + kz2;
 		   k4 = k2*k2;
 
@@ -228,18 +229,21 @@ ternary::ternary(double X1, double kA, double kB, double kC1, double icA, double
 	 {
 	   for(i2 = 0; i2 < n_y; i2++)
 	     {
-	       //normalizing the values
-	       cA[i2 + n_y*i1][0] = cA[i2 + n_y*i1][0]/(n_x*n_y);
-	       cB[i2 + n_y*i1][0] = cB[i2 + n_y*i1][0]/(n_x*n_y);
+	       for(i3 = 0; i3 < n_z; i3++)
+		 {
+		   //normalizing the values
+		   cA[i3 + n_y*(i2+n_y*i1)][0] = cA[i3 + n_y*(i2+n_y*i1)][0]/(n_x*n_y*n_z);
+		   cB[i3 + n_y*(i2+n_y*i1)][0] = cB[i3 + n_y*(i2+n_y*i1)][0]/(n_x*n_y*n_z);
 
-	       cA[i2 + n_y*i1][1] = 0.0;
-	       cB[i2 + n_y*i1][1] = 0.0;
+		   cA[i3 + n_y*(i2+n_y*i1)][1] = 0.0;
+		   cB[i3 + n_y*(i2+n_y*i1)][1] = 0.0;
 
-	       //calculate cC
-	       cC[i2 + n_y*i1][0] = 1.0 - cA[i2 + n_y*i1][0] - cB[i2 + n_y*i1][0];
-	       cC[i2 + n_y*i1][1] = 0.0;
+		   //calculate cC
+		   cC[i3 + n_y*(i2+n_y*i1)][0] = 1.0 - cA[i3 + n_y*(i2+n_y*i1)][0] - cB[i3 + n_y*(i2+n_y*i1)][0];
+		   cC[i3 + n_y*(i2+n_y*i1)][1] = 0.0;
 
-	       //cout << cA[i2+n_y*i1][0] << " " << cB[i2+n_y*i1][0] << " " << cC[i2+n_y*i1][0] << "\n";
+		   //cout << cA[i2+n_y*i1][0] << " " << cB[i2+n_y*i1][0] << " " << cC[i2+n_y*i1][0] << "\n";
+		 }
 	     }
 	 }
 
@@ -252,10 +256,13 @@ ternary::ternary(double X1, double kA, double kB, double kC1, double icA, double
 	     {
 	       for(i2 = 0; i2 < n_y; i2++)
 		 {
-		   double r = 10*cA[i2+n_y*i1][0] + 30*cB[i2+n_y*i1][0] + 20*cC[i2+n_y*i1][0];
-		   out <<  to_string(r) << " ";
+		   for(i3 = 0; i3 <n_z; i3++)
+		     {
+		       double r = 10*cA[i2+n_y*i1][0] + 30*cB[i2+n_y*i1][0] + 20*cC[i2+n_y*i1][0];
+		       out <<  to_string(i1) << " " << to_string(i2) << " " << to_string(i3) << " " << to_string(r) << "\n\n";
+		     }
 		 }
-	       out << "\n";
+	       //out << "\n";
 	     }
 	   out.close();
 	 }
@@ -281,9 +288,9 @@ ternary::ternary(double X1, double kA, double kB, double kC1, double icA, double
        fftw_destroy_plan(planBgB);
  }
 
-int main()
+int main(int argc, char **argv)
 {
-  ternary *t = new ternary(3.5, 4.0, 4.0, 4.0, 0.25, 0.25, 0.5, 1.0, 1.0,-0.5, 1.0, 1.0, 0.05);
+  ternary *t = new ternary(3.5, atof(argv[1]),atof(argv[2]), atof(argv[3]), 0.25, 0.25, 0.5, 1.0, 1.0,-0.5, 1.0, 1.0, 1.0, 0.05);
 
   t->simulate();
   return 1;
