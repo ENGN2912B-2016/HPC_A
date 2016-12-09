@@ -1,9 +1,0 @@
-## SLURM PROLOG ###############################################################
-##    Job ID : 14343982
-##  Job Name : ternary_thread_equal_ie
-##  Nodelist : node824
-##      CPUs : 
-##  Mem/Node : 49152 MB
-## Directory : /gpfs_home/ssamanta/ENGN_2912B/HPC/thread/ternary_thread_equal_ie
-##   Started : Fri Dec  2 15:21:44 EST 2016
-###############################################################################
