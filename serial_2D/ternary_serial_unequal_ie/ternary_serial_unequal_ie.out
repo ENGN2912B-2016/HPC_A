@@ -1,9 +1,0 @@
-## SLURM PROLOG ###############################################################
-##    Job ID : 14344015
-##  Job Name : ternary_serial_unequal_ie
-##  Nodelist : node812
-##      CPUs : 
-##  Mem/Node : 49152 MB
-## Directory : /gpfs_home/ssamanta/ENGN_2912B/HPC/serial/ternary_serial_unequal_ie
-##   Started : Fri Dec  2 15:23:16 EST 2016
-###############################################################################
