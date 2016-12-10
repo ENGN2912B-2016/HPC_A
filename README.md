@@ -48,3 +48,8 @@ Inside GNUplot (note the filenames will differ a bit depending on 2D or 3D)
 gnuplot> load "plotAnimation.gp" #generate the png files
 gnuplot> load "plotAnimation_gif.gp #generate the aninmated gif
 ```
+
+**Sample Visualisation**
+
+![visual 2D](https://github.com/ENGN2912B/HPC_A/blob/master/timestep86000.png)
+![visual 3D](https://github.com/ENGN2912B/HPC_A/blob/master/timestep79000.png)
