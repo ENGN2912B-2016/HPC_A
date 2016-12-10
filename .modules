@@ -1,0 +1,4 @@
+module load git
+module load gcc
+module load mpich
+module load fftw/3.3.4
