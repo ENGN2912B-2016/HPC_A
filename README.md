@@ -46,7 +46,7 @@ $ gnuplot #open gnuplot
 Inside GNUplot (note the filenames will differ a bit depending on 2D or 3D)
 ```bash
 gnuplot> load "plotAnimation.gp" #generate the png files
-gnuplot> load "plotAnimation_gif.gp #generate the aninmated gif
+gnuplot> load "plotAnimation_gif.gp" #generate the aninmated gif
 ```
 
 **Sample Visualisation**
