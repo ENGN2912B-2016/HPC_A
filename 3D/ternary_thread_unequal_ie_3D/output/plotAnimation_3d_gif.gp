@@ -1,7 +1,7 @@
 set pm3d 
 set palette defined (10 'black', 30 'gray')
 set terminal gif animate
-set output "ternary_thread_equal_ie.gif"
+set output "ternary_thread_equal_ie_3D.gif"
 unset border
 unset xtics
 unset ytics
