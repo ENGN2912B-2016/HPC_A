@@ -24,6 +24,14 @@ For each cases, the code was run for different parameters (interfacial energy), 
 
 **Compilation Running and Visualisations instruction**
 
+#####Compiling and linking without the use of makefile (through command line)
+
+Serial Code - `$ g++ ternary_serial.cpp -lfftw3 -lm -std=c++11 -o ternary_serial -g`
+
+Threaded Code - `$ g++ ternary_thread.cpp -lfftw3_threads -lfftw3 -lm -std=c++11 -o ternary_serial -g -lpthread`
+
+#####Compiling and linking using makefiles:
+
 ```bash
 $ cd <folder_name>/ #enter the particular folder
 $ cmake CMakeLists.txt #build using cmake
@@ -35,6 +43,7 @@ On the executable is made, submit a job to CCV (also catch up some sleep, it is 
 ```bash
 $ sbatch ternary_<remaining_name>.sh #submit the job to CCV
 ```
+#####Generating gif and png images of results:
 
 Once the datafiles are generated, proceed to make the png files and the animated gif
 ```bash
@@ -46,7 +55,7 @@ $ gnuplot #open gnuplot
 Inside GNUplot (note the filenames will differ a bit depending on 2D or 3D)
 ```bash
 gnuplot> load "plotAnimation.gp" #generate the png files
-gnuplot> load "plotAnimation_gif.gp" #generate the aninmated gif
+gnuplot> load "plotAnimation_gif.gp" #generate the animated gif
 ```
 
 **Sample Visualisation**
